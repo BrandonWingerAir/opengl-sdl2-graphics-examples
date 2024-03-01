@@ -20,9 +20,9 @@ GLuint gVertexBufferObject  =   0;
 const std::string gVertexShaderSource =
     "#version 410 core\n"
     "in vec4 position;\n"
-    "void main(\n)"
+    "void main()\n"
     "{\n"
-    "   gl_Position = vec4(position.x, position.y, position.x, position.z, position.w);\n"
+    "   gl_Position = vec4(position.x, position.y, position.z, position.w);\n"
     "}\n";
 
 // Fragment Shader:
@@ -30,10 +30,10 @@ const std::string gVertexShaderSource =
 // and determine a final color sent to the screen
 const std::string gFragmentShaderSource =
     "#version 410 core\n"
-    "in vec4 color;\n"
-    "void main(\n)"
+    "out vec4 color;\n"
+    "void main()\n"
     "{\n"
-    "   color = vec4(1.0f, 0.5f, 0.0f, 1.0f);\n"
+    "   color = vec4(0.98f, 0.769f, 0.282f, 1.0f);\n"
     "}\n";
 
 // Shader Program Object
@@ -58,7 +58,7 @@ GLuint CompileShader(GLuint type, const std::string& source) {
 GLuint CreateShaderProgram(const std::string& vertexShaderSource, const std::string& fragmentShaderSource) {
     GLuint programObject = glCreateProgram();
 
-    GLuint myVertexShader = CompileShader(GL_VERTEX_SHADER, vertexShaderSource);
+    GLuint myVertexShader   = CompileShader(GL_VERTEX_SHADER, vertexShaderSource);
     GLuint myFragmentShader = CompileShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
 
     glAttachShader(programObject, myVertexShader);
@@ -158,11 +158,22 @@ void Input() {
 }
 
 void PreDraw() {
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_CULL_FACE);
 
+    glViewport(0, 0, gScreenWidth, gScreenHeight);
+    glClearColor(0.106f, 0.69f, 0.298f, 1.f);
+
+    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+    glUseProgram(gGraphicsPipelineShaderProgram);
 }
 
 void Draw() {
+    glBindVertexArray(gVertexArrayObject);
+    glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);
 
+    glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
 void MainLoop() {
@@ -186,6 +197,7 @@ int main(int, char **) {
 
     VertexSpecification();
     CreateGraphicsPipeline();
+
     MainLoop();
 
     CleanUp();

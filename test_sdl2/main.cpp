@@ -1,7 +1,8 @@
 // On linux compile with:
 // g++ -std=c++17 main.cpp glad/src/glad.c -I./glad/include -o program -lSDL2 -ldl
-// On windows compile with (if using mingw)
-// g++ main.cpp ./glad/src/glad.c -I./glad/include -o program.exe -lmingw32 -lSDL2main -lSDL2
+
+// On windows compile with (If using mingw add argument -lmingw32):
+// g++ main.cpp ./glad/src/glad.c -I./glad/include -o program.exe -lSDL2main -lSDL2
 
 // C++ Standard Libraries
 #include <iostream>
