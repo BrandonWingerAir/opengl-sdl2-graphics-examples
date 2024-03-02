@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include <glad/glad.h>
+
 #include <iostream>
 #include <vector>
 
@@ -16,7 +17,7 @@ GLuint gVertexArrayObject   =   0;
 GLuint gVertexBufferObject  =   0;
 
 // Vertex Shader:
-// Execute once per vertex and set final position
+// Executes once per vertex and sets final position
 const std::string gVertexShaderSource =
     "#version 410 core\n"
     "in vec4 position;\n"
@@ -26,8 +27,8 @@ const std::string gVertexShaderSource =
     "}\n";
 
 // Fragment Shader:
-// Execute once per fragment (i.e. nearly every pixel that will be rasterized)
-// and determine a final color sent to the screen
+// Executes once per fragment (i.e. nearly every pixel that will be rasterized)
+// and determines final color sent to the screen
 const std::string gFragmentShaderSource =
     "#version 410 core\n"
     "out vec4 color;\n"
@@ -51,6 +52,27 @@ GLuint CompileShader(GLuint type, const std::string& source) {
     const char* src = source.c_str();
     glShaderSource(shaderObject, 1, &src, nullptr);
     glCompileShader(shaderObject);
+
+    int result;
+    glGetShaderiv(shaderObject, GL_COMPILE_STATUS, &result);
+
+    if (result == GL_FALSE) {
+        int length;
+        glGetShaderiv(shaderObject, GL_INFO_LOG_LENGTH, &length);
+        char* errorMessages = new char[length];
+        glGetShaderInfoLog(shaderObject, length, &length, errorMessages);
+
+        if (type == GL_VERTEX_SHADER) {
+            std::cout << "Error: GL_VERTEX_SHADER compilation failed!\n" << errorMessages << "\n";
+        } else if (type == GL_FRAGMENT_SHADER) {
+            std::cout << "Error: GL_FRAGMENT_SHADER compilation failed!\n" << errorMessages << "\n";
+        }
+
+        delete[] errorMessages;
+        glDeleteShader(shaderObject);
+
+        return 0;
+    }
 
     return shaderObject;
 }
@@ -128,20 +150,20 @@ void InitializeProgram() {
                                                   SDL_WINDOW_OPENGL);
 
     if (gGraphicsApplicationWindow == nullptr) {
-        std::cout << "SDL_Window was not able to be created" << std::endl;
+        std::cout << "Window could not be created! SDL Error:" << SDL_GetError() << "\n";
         exit(1);
     }
 
     gOpenGLContext = SDL_GL_CreateContext(gGraphicsApplicationWindow);
 
     if (gOpenGLContext == nullptr) {
-        std::cout << "OpenGL context not available\n";
+        std::cout << "OpenGL context could not be created! SDL Error: " << SDL_GetError() << "\n";
         exit(1);
     }
 
     // Initialize Glad Library
     if (!gladLoadGLLoader(SDL_GL_GetProcAddress)) {
-        std::cout << "Glad was not initialized!" << std::endl;
+        std::cout << "Error: Glad could not be initialized!" << std::endl;
         exit(1);
     }
 }
