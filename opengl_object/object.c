@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 void printText() {
-    printf("hello\n");
+    printf("Success: Program object function initiated.\n");
 }
 
 void init_programObject(programObject_t* o) {
